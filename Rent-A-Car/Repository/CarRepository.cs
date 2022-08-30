@@ -1,31 +1,26 @@
-﻿using Rent_A_Car.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Rent_A_Car.Repository
 {
     public class CarRepository : ICarRepository
     {
-        public readonly ICarRepository _carRepository;
-        List<Car> _cars;
-        public CarRepository(ICarRepository carRepository)
+        readonly List<Car> _cars;
+        public CarRepository()
         {
-            _carRepository = carRepository;
             _cars = new List<Car>();
         }
 
         public Car? GetCar(string numberplate) => _cars.Find(car => car.Numberplate == numberplate);
-        public void RentCar(DateTime rentFrom, DateTime rentTo) => GetCar("")?.Reservations.Add(new(rentFrom, rentTo)); 
-        public void NewCar(Car car) => _cars.Add(new(car.CarId, car.Numberplate, car.Seats, car.CarModel, car.CarBrand));
+        public void RentCar(int customerId, DateTime rentFrom, DateTime rentTo) => GetCar("")?.Reservations.Add(new(customerId, rentFrom, rentTo)); 
+        public void NewCar(Car car) => _cars.Add(new(car.CarId, car.Numberplate, car.Seats, car.CarColor, car.CarBrandName, car.CarModel));
         public void DeleteCar(Car car) => _cars.Remove(car);
         public void EditCar(Car car, string numberplate)
         {
             Car theCar = GetCar(numberplate);
-            theCar = new(car.CarId, car.Numberplate, car.Seats, car.CarColor, new());
+            theCar.Seats = Validate.TryParseInt();
+            theCar.Numberplate = Validate.ValidString();
+            theCar.CarColor = Validate.ValidString();
         }
-        public List<Reservation> GetReservation(Car car) => car.Reservations;
+        public List<Reservation> GetReservations(Car car) => car.Reservations;
+
     }
 }
