@@ -1,9 +1,7 @@
-﻿
-namespace Rent_A_Car.Repository
+﻿namespace Rent_A_Car.Models
 {
     public interface ICar
     {
-        int CarId { get; set; }
         string Numberplate { get; set; }
         int Seats { get; set; }
         string CarColor { get; set; }

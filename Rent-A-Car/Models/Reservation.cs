@@ -1,5 +1,4 @@
-﻿
-namespace Rent_A_Car.Models
+﻿namespace Rent_A_Car.Models
 {
     public class Reservation : IReservation
     {

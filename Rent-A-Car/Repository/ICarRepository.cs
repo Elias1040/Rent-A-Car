@@ -1,13 +1,14 @@
-﻿
+﻿using Rent_A_Car.Models;
+
 namespace Rent_A_Car.Repository
 {
     public interface ICarRepository
     {
         Car GetCar(string numberplate);
-        void NewCar(Car car);
-        void DeleteCar(Car car);
-        void EditCar(Car car, string numberplate);
-        void RentCar(int customerId, DateTime rentFrom, DateTime rentTo);
+        string NewCar(string numberplate, int seats, string color, string brand, string model);
+        bool DeleteCar(string numberplate);
+        string EditCar(string numberplate, int seats, string color, string brand, string model);
+        string RentCar(string numberplate, int customerId, DateTime rentFrom, DateTime rentTo);
         List<Reservation> GetReservations(Car car);
     }
 }

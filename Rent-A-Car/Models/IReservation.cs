@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Rent_A_Car.Repository
+namespace Rent_A_Car.Models
 {
     public interface IReservation
     {

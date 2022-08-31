@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Rent_A_Car.Repository
+namespace Rent_A_Car.BLL
 {
     public class CustomerMiddleman
     {
-        public readonly ICustomerRepository _customerRepo;
+        public readonly ICustomerRepository customerRepo;
         public CustomerMiddleman(ICustomerRepository customerRepository)
         {
-            _customerRepo = customerRepository;
+            customerRepo = customerRepository;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿
+﻿using Rent_A_Car.Models;
+
 namespace Rent_A_Car.Repository
 {
     public class CarRepository : ICarRepository
@@ -9,16 +10,40 @@ namespace Rent_A_Car.Repository
             _cars = new List<Car>();
         }
 
-        public Car? GetCar(string numberplate) => _cars.Find(car => car.Numberplate == numberplate);
-        public void RentCar(int customerId, DateTime rentFrom, DateTime rentTo) => GetCar("")?.Reservations.Add(new(customerId, rentFrom, rentTo)); 
-        public void NewCar(Car car) => _cars.Add(new(car.CarId, car.Numberplate, car.Seats, car.CarColor, car.CarBrandName, car.CarModel));
-        public void DeleteCar(Car car) => _cars.Remove(car);
-        public void EditCar(Car car, string numberplate)
+        public Car GetCar(string numberplate) =>
+            _cars.Find(car => car.Numberplate == numberplate);
+
+        public string RentCar(string numberplate, int customerId, DateTime rentFrom, DateTime rentTo)
         {
-            Car theCar = GetCar(numberplate);
-            theCar.Seats = Validate.TryParseInt();
-            theCar.Numberplate = Validate.ValidString();
-            theCar.CarColor = Validate.ValidString();
+            Car? car = GetCar(numberplate);
+            car.Reservations.Add(new((int)customerId, rentFrom, rentTo));
+            return $"Car rented: \n";
+        }
+
+        public string NewCar(string numberplate, int seats, string color, string brand, string model)
+        {
+            Car car = new(numberplate, seats, color, brand, model);
+            _cars.Add(new(numberplate, seats, color, brand, model));
+            return $"Car created with: \n{car.Numberplate}\n{car.CarBrandName}\n{car.CarModel}\n{car.CarColor}";
+        }
+
+        public bool DeleteCar(string numberplate) => _cars.Remove(_cars.Find(car => car.Numberplate == numberplate));
+
+        public string EditCar(string numberplate, int seats, string color, string brand, string model)
+        {
+            Car? car = GetCar(numberplate);
+            car.Numberplate = numberplate;
+            car.Seats = seats;
+            car.CarColor = color;
+            car.CarBrandName = brand;
+            car.CarModel = model;
+            return car != null ? $"{car.Numberplate} was updated with: " +
+                $"\n{car.Numberplate} " +
+                $"\n{car.CarBrandName} " +
+                $"\n{car.CarModel} " +
+                $"\n{car.CarColor} " +
+                $"\n{car.Seats}" :
+                "The car doesnt exist";
         }
         public List<Reservation> GetReservations(Car car) => car.Reservations;
 

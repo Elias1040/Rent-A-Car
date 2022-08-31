@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Rent_A_Car.Repository
+namespace Rent_A_Car.BLL
 {
     public class CarMiddleman
     {
-        public readonly ICarRepository _carRepo;
+        public readonly ICarRepository carRepo;
         public CarMiddleman(ICarRepository carRepository)
         {
-            _carRepo = carRepository;
+            carRepo = carRepository;
         }
     }
 }
