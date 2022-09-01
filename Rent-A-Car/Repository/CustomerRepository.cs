@@ -14,11 +14,29 @@ namespace Rent_A_Car.Repository
         public Customer GetCustomer(int id) => 
             _customer.Find(customer => customer.CustomerId == id);
 
+        public int CustomerExist()
+        {
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Customer id: ");
+                    return GetCustomer(Validate.TryParseInt()).CustomerId;
+                }
+                catch (NullReferenceException)
+                {
+                    Console.WriteLine("Customer doesnt exist try again");
+                }
+            }
+        }
         public string NewCustomer(string name, string phone)
         {
             Customer customer = new(_customerCounter++, name, phone);
             _customer.Add(customer);
-            return $"Account created with: \n{customer.CustomerId}\n{customer.CustomerName}\n{customer.CustomerPhone}";
+            return $"Customer created with: " +
+                $"\nId: {customer.CustomerId}" +
+                $"\nName: {customer.CustomerName}" +
+                $"\nPhone: {customer.CustomerPhone}";
         }
 
         public bool DeleteCustomer(int id) => 
@@ -30,10 +48,10 @@ namespace Rent_A_Car.Repository
             customer.CustomerName = customerName;
             customer.CustomerPhone = customerPhone;
             return customer != null ? 
-                $"Account created with: " +
-                $"\n{customer.CustomerId}" +
-                $"\n{customer.CustomerName}" +
-                $"\n{customer.CustomerPhone}" :
+                $"Customer updated with: " +
+                $"\nId: {customer.CustomerId}" +
+                $"\nName: {customer.CustomerName}" +
+                $"\nPhone: {customer.CustomerPhone}" :
                 "Customer doesnt exist";
         }
         // public List<Reservation> GetReservations() => 

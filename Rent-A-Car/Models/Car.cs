@@ -15,7 +15,7 @@
             CarColor = carColor;
             CarBrandName = carBrandName;
             CarModel = carModel;
-            List<Reservation> reservations = new List<Reservation>();
+            Reservations = new List<Reservation>();
         }
     }
 }

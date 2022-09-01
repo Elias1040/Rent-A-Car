@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System.Text.RegularExpressions;
 
 ServiceProvider serviceProvider = new ServiceCollection()
     .AddSingleton<ICarRepository, CarRepository>()
@@ -14,6 +15,8 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
     List<string> logs = new();
     CarWash carWash = new(0);
     Task.Run(() => carWash.WashCar());
+    
+    
     do
     {
         switch (MenuList())
@@ -21,8 +24,6 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
             // Create customer
             case ConsoleKey.D1 or ConsoleKey.NumPad1:
                 #region Create car
-                Console.WriteLine("Numberplate: ");
-                string numberplate = Validate.ValidString();
                 Console.WriteLine("Number of seats: ");
                 int seats = Validate.TryParseInt();
                 Console.WriteLine("Car color: ");
@@ -31,47 +32,20 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                 string carBrand = Validate.ValidString();
                 Console.WriteLine("Car model: ");
                 string carModel = Validate.ValidString();
-                string feedback = carRepo.carRepo.NewCar(numberplate, seats, carColor, carBrand, carModel);
+                string feedback = carRepo.carRepo.NewCar(seats, carColor, carBrand, carModel);
                 Console.WriteLine(feedback);
                 #endregion
                 break;
             // Rent car
             case ConsoleKey.D2 or ConsoleKey.NumPad2:
                 #region Rent car
-                //Console.WriteLine("Customer id");
-                //int customerId = customerRepo.customerRepo.GetCustomer(Validate.TryParseInt()).CustomerId;
-                numberplate = String.Empty;
-                bool exist;
-                int customerId = 0;
-                do
-                {
-                    try
-                    {
-                        Console.WriteLine("Customer id: ");
-                        customerId = customerRepo.customerRepo.GetCustomer(Validate.TryParseInt()).CustomerId;
-                        exist = true;
-                    }
-                    catch (NullReferenceException)
-                    {
-                        Console.WriteLine("Customer doesnt exist \nTry again");
-                        exist = false;
-                    }
-                    try
-                    {
-                        Console.WriteLine("Numberplate");
-                        numberplate = Validate.ValidString();
-                        exist = true;
-                    }
-                    catch (NullReferenceException)
-                    {
-                        Console.WriteLine("Car doesnt exist \nTry again");
-                        exist = false;
-                    }
-                } while (!exist);
+                string numberplate = carRepo.carRepo.CarExist();
+                int customerId = customerRepo.customerRepo.CustomerExist();
                 Console.WriteLine("Rent from: (dd-mm-yyyy)");
                 DateTime rentFrom = Validate.TryParseDateTime();
                 while (rentFrom < DateTime.Now)
                 {
+                    Console.Clear();
                     Console.WriteLine("Cannot rent backwards \nTry again: ");
                     rentFrom = Validate.TryParseDateTime();
                 }
@@ -79,18 +53,19 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                 DateTime rentTo = Validate.TryParseDateTime();
                 while (rentTo < rentFrom)
                 {
+                    Console.Clear();
                     Console.WriteLine("Cannot rent backwards \nTry again: ");
                     rentTo = Validate.TryParseDateTime();
                 }
-
-                carRepo.carRepo.RentCar(numberplate, customerId, rentFrom, rentTo);
+                feedback = carRepo.carRepo.RentCar(numberplate, customerId, rentFrom, rentTo);
+                Console.WriteLine(feedback);
+                Console.ReadKey(true);
                 #endregion
                 break;
             // Update car
             case ConsoleKey.D3 or ConsoleKey.NumPad3:
                 #region Update car
-                Console.WriteLine("Numberplate: ");
-                numberplate = Validate.ValidString();
+                numberplate = carRepo.carRepo.CarExist();
                 Console.WriteLine("Seats: ");
                 seats = Validate.TryParseInt();
                 Console.WriteLine("Color: ");
@@ -106,8 +81,7 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
             // Wash car
             case ConsoleKey.D4 or ConsoleKey.NumPad4:
                 #region Wash car
-                Console.WriteLine("numberplate: ");
-                carWash.AddCars(carRepo.carRepo.GetCar(Validate.ValidString()));
+                carWash.AddCars(carRepo.carRepo.GetCar(carRepo.carRepo.CarExist()));
                 #endregion
                 break;
             // Delete car
@@ -133,8 +107,7 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
             // Update customer
             case ConsoleKey.D7 or ConsoleKey.NumPad7:
                 #region Update customer
-                Console.WriteLine("Customer id: ");
-                customerId = Validate.TryParseInt();
+                customerId = customerRepo.customerRepo.CustomerExist();
                 Console.WriteLine("Name: ");
                 customerName = Validate.ValidString();
                 Console.WriteLine("Phone: ");
