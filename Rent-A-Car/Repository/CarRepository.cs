@@ -11,7 +11,9 @@ namespace Rent_A_Car.Repository
         }
 
         public Car GetCar(string numberplate) =>
-            _cars.Find(car => car.Numberplate == numberplate);
+            _cars.Find(car => car.Numberplate
+            .Replace(" ", string.Empty) == numberplate
+            .Replace(" ", string.Empty).ToUpper());
 
         public string CarExist()
         {
@@ -50,7 +52,13 @@ namespace Rent_A_Car.Repository
             {
                 plate += letters[random.Next(0, letters.Length)];
             }
-            for (int i = 0; i < 5; i++)
+            plate += " ";
+            for (int i = 0; i < 2; i++)
+            {
+                plate += numbers[random.Next(0, numbers.Length)];
+            }
+            plate += " ";
+            for (int i = 0; i < 3; i++)
             {
                 plate += numbers[random.Next(0, numbers.Length)];
             }
@@ -79,7 +87,6 @@ namespace Rent_A_Car.Repository
         public string EditCar(string numberplate, int seats, string color, string brand, string model)
         {
             Car? car = GetCar(numberplate);
-            car.Numberplate = numberplate;
             car.Seats = seats;
             car.CarColor = color;
             car.CarBrandName = brand;
