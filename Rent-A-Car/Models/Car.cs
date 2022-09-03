@@ -8,6 +8,8 @@
         public string CarModel { get; set; }
         public string CarColor { get; set; }
         public List<Reservation> Reservations { get; set; }
+        public int Distance { get; set; }
+        // public int Horsepower { get; set; }
         public Car(string numberplate, int seats, string carColor, string carBrandName, string carModel)
         {
             Numberplate = numberplate;
@@ -16,6 +18,7 @@
             CarBrandName = carBrandName;
             CarModel = carModel;
             Reservations = new List<Reservation>();
+            Distance = 0;
         }
     }
 }

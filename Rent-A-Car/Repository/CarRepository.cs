@@ -22,7 +22,8 @@ namespace Rent_A_Car.Repository
                 try
                 {
                     Console.WriteLine("Numberplate: ");
-                    return GetCar(Validate.ValidString()).Numberplate;
+                    string numberplate = Validate.ValidString();
+                    return GetCar(numberplate).Numberplate;
                 }
                 catch (NullReferenceException)
                 {
@@ -34,6 +35,13 @@ namespace Rent_A_Car.Repository
         public string RentCar(string numberplate, int customerId, DateTime rentFrom, DateTime rentTo)
         {
             Car? car = GetCar(numberplate);
+            foreach (Reservation item in car.Reservations)
+            {
+                if ((rentFrom > item.ReservedFrom || rentFrom < item.ReservedTo) && (rentTo > item.ReservedFrom || rentTo < item.ReservedTo))
+                {
+                    return string.Empty;
+                }
+            }
             Reservation reservation = new(customerId, rentFrom, rentTo);
             car.Reservations.Add(reservation);
             return $"Car rented: " +
@@ -46,59 +54,75 @@ namespace Rent_A_Car.Repository
         {
             string letters = "abcdefghijklmnopqrstuvwxyz";
             string numbers = "0123456789";
-            Random random = new Random();
-            string plate = string.Empty;
-            for (int i = 0; i < 2; i++)
+            Random random = new();
+            string plate;
+            do
             {
-                plate += letters[random.Next(0, letters.Length)];
-            }
-            plate += " ";
-            for (int i = 0; i < 2; i++)
-            {
-                plate += numbers[random.Next(0, numbers.Length)];
-            }
-            plate += " ";
-            for (int i = 0; i < 3; i++)
-            {
-                plate += numbers[random.Next(0, numbers.Length)];
-            }
+                plate = string.Empty;
+                for (int i = 0; i < 2; i++)
+                {
+                    plate += letters[random.Next(0, letters.Length)];
+                }
+                plate += " ";
+                for (int i = 0; i < 2; i++)
+                {
+                    plate += numbers[random.Next(0, numbers.Length)];
+                }
+                plate += " ";
+                for (int i = 0; i < 3; i++)
+                {
+                    plate += numbers[random.Next(0, numbers.Length)];
+                }
+            } while (_cars.Contains(GetCar(plate)));
             return plate.ToUpper();
         }
 
-        public string NewCar(int seats, string color, string brand, string model)
+        public Car NewCar(int seats, string color, string brand, string model)
         {
-            string numberplate = string.Empty;
-            do
-            {
-                numberplate = NumberplateGenerator();
-            } while (_cars.Contains(GetCar(numberplate)));
+            string numberplate = NumberplateGenerator();
             Car car = new(numberplate, seats, color, brand, model);
-            _cars.Add(new(numberplate, seats, color, brand, model));
-            return $"Car created with: " +
-                $"\nNumberplate: {car.Numberplate}" +
-                $"\nBrand: {car.CarBrandName}" +
-                $"\nModel: {car.CarModel}" +
-                $"\nColor: {car.CarColor}" +
-                $"\nSeats: {car.Seats}";
+            _cars.Add(car);
+            return car;
         }
 
         public bool DeleteCar(string numberplate) => _cars.Remove(_cars.Find(car => car.Numberplate == numberplate));
 
-        public string EditCar(string numberplate, int seats, string color, string brand, string model)
+        public Car EditCar(string numberplate, int seats, string color, string brand, string model)
         {
-            Car? car = GetCar(numberplate);
+            Car car = GetCar(numberplate);
             car.Seats = seats;
             car.CarColor = color;
             car.CarBrandName = brand;
             car.CarModel = model;
-            return car != null ? $"{car.Numberplate} was updated with: " +
-                $"\nNumberplate: {car.Numberplate} " +
-                $"\nBrand: {car.CarBrandName} " +
-                $"\nModel: {car.CarModel} " +
-                $"\nColor: {car.CarColor} " +
-                $"\nSeats: {car.Seats}" :
-                "The car doesnt exist";
+            return car;
         }
+
+        public List<Car> GetCustomerReservations(int customerID)
+        {
+            List<Car> cars = new();
+            foreach (Car car in _cars)
+            {
+                foreach (Reservation res in car.Reservations)
+                {
+                    if (customerID == res.CustomerId)
+                    {
+                        cars.Add(car);
+                    }
+                }
+            }
+            return cars;
+        }
+
+        public Car ReturnCar(string numberplate, int customerId, int distance)
+        {
+            Car car = GetCar(numberplate);
+            car.Reservations.Remove(car.Reservations.Find(res => res.CustomerId == customerId));
+            car.Distance = distance;
+            return car;
+        }
+
+        public List<Car> GetAllCars() => _cars;
+
         public List<Reservation> GetReservations(Car car) => car.Reservations;
 
     }

@@ -29,31 +29,24 @@ namespace Rent_A_Car.Repository
                 }
             }
         }
-        public string NewCustomer(string name, string phone)
+        public Customer NewCustomer(string name, string phone)
         {
             Customer customer = new(_customerCounter++, name, phone);
             _customer.Add(customer);
-            return $"Customer created with: " +
-                $"\nId: {customer.CustomerId}" +
-                $"\nName: {customer.CustomerName}" +
-                $"\nPhone: {customer.CustomerPhone}";
+            return customer;
         }
 
         public bool DeleteCustomer(int id) => 
             _customer.Remove(_customer.Find(customer => customer.CustomerId == id));
 
-        public string EditCustomer(int id, string customerName, string customerPhone)
+        public Customer? EditCustomer(int id, string customerName, string customerPhone)
         {
             Customer? customer = GetCustomer(id);
             customer.CustomerName = customerName;
             customer.CustomerPhone = customerPhone;
-            return customer != null ? 
-                $"Customer updated with: " +
-                $"\nId: {customer.CustomerId}" +
-                $"\nName: {customer.CustomerName}" +
-                $"\nPhone: {customer.CustomerPhone}" :
-                "Customer doesnt exist";
+            return customer;
         }
+
         // public List<Reservation> GetReservations() => 
     }
 }

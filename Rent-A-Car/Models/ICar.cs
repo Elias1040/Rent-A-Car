@@ -2,11 +2,12 @@
 {
     public interface ICar
     {
+        string CarBrandName { get; set; }
+        string CarModel { get; set; }
         string Numberplate { get; set; }
         int Seats { get; set; }
         string CarColor { get; set; }
+        int Distance { get; set; }
         List<Reservation> Reservations { get; set; }
-        string CarBrandName { get; set; }
-        string CarModel { get; set; }
     }
 }

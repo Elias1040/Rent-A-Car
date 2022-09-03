@@ -6,10 +6,13 @@ namespace Rent_A_Car.Repository
     {
         Car GetCar(string numberplate);
         string CarExist();
-        string NewCar(int seats, string color, string brand, string model);
+        Car NewCar(int seats, string color, string brand, string model);
         bool DeleteCar(string numberplate);
-        string EditCar(string numberplate, int seats, string color, string brand, string model);
+        Car EditCar(string numberplate, int seats, string color, string brand, string model);
         string RentCar(string numberplate, int customerId, DateTime rentFrom, DateTime rentTo);
         List<Reservation> GetReservations(Car car);
+        List<Car> GetCustomerReservations(int customerID);
+        List<Car> GetAllCars();
+        Car ReturnCar(string numberplate, int customerId, int distance);
     }
 }
