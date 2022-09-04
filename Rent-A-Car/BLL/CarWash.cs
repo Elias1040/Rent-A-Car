@@ -5,29 +5,22 @@ namespace Rent_A_Car.BLL
     public class CarWash : ICarWash
     {
         public int CarwashNumber { get; set; }
-        Queue<Car> CarsQueue { get; set; }
 
         public CarWash(int carwashNumber)
         {
             CarwashNumber = carwashNumber;
-            CarsQueue = new();
         }
 
-        public void AddCars(Car car)
+        public async Task<string> StartWash(Car car)
         {
-            CarsQueue.Enqueue(car);
+            string feedback = $"{await Task.Run(() => WashCar(car))} - {DateTime.Now.ToString("HH:mm:ss - MM/dd/yyyy")}";
+            return feedback;
         }
-        public void WashCar()
+        public string WashCar(Car car)
         {
-            while (true)
-            {
-                while (CarsQueue.Count > 0)
-                {
-                    Task.Delay(20000).Wait();
-                    Car car = CarsQueue.Dequeue();
-                    Console.WriteLine($"{car.Numberplate} has been washed");
-                }
-            }
+            Console.WriteLine("Washing...");
+            Task.Delay(40000).Wait();
+            return $"{car.Numberplate} has been washed";
         }
     }
 }

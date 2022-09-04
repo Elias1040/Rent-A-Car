@@ -5,9 +5,13 @@ namespace Rent_A_Car.Repository
     public class CarRepository : ICarRepository
     {
         readonly List<Car> _cars;
+        public CarWash CarWash { get; set; }
+        public List<string> Logs { get; set; }
         public CarRepository()
         {
             _cars = new List<Car>();
+            Logs = new List<string>();
+            CarWash = new(0);
         }
 
         public Car GetCar(string numberplate) =>
@@ -44,10 +48,24 @@ namespace Rent_A_Car.Repository
             }
             Reservation reservation = new(customerId, rentFrom, rentTo);
             car.Reservations.Add(reservation);
+            Receipt(car, rentFrom, rentTo);
             return $"Car rented: " +
                 $"\nCar: {car.CarBrandName} {car.CarModel} " +
                 $"\nRent from: {rentFrom}" +
                 $"\nRent to: {rentTo}";
+        }
+
+        public void Receipt(Car car, DateTime rentFrom, DateTime rentTo)
+        {
+            FileStream file = File.Create($@"C:\Users\elias\Downloads\RentACarReceipts\{car.Numberplate}.txt");
+            using (StreamWriter sw = new StreamWriter(file))
+            {
+                sw.WriteLine($"Brand: {car.CarBrandName}");
+                sw.WriteLine($"Model: {car.CarModel}");
+                sw.WriteLine($"Numberplate: {car.Numberplate}");
+                sw.WriteLine($"Rent from: {rentFrom}");
+                sw.WriteLine($"Rent to: {rentTo}");
+            }
         }
 
         public string NumberplateGenerator()
@@ -117,13 +135,27 @@ namespace Rent_A_Car.Repository
         {
             Car car = GetCar(numberplate);
             car.Reservations.Remove(car.Reservations.Find(res => res.CustomerId == customerId));
-            car.Distance = distance;
+            AddDistance(car, distance);
+            if (car.Distance >= 200000)
+            {
+                DeleteCar(car.Numberplate);
+            }
+            else
+            {
+                CarWash.StartWash(car);
+            }
             return car;
         }
+
+        public void AddDistance(Car car, int distance) => car.Distance += distance;
 
         public List<Car> GetAllCars() => _cars;
 
         public List<Reservation> GetReservations(Car car) => car.Reservations;
 
+        public async Task WashCar(string numberplate)
+        {
+            Logs.Add(await CarWash.StartWash(GetCar(numberplate)));
+        }
     }
 }

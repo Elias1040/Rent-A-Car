@@ -13,11 +13,18 @@ Menu(carRepo, customerRepo);
 
 void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
 {
-    List<string> logs = new();
-    CarWash carWash = new(0);
-    Task.Run(() => carWash.WashCar());
     do
     {
+        if (carRepo.carRepo.Logs.Count > 0)
+        {
+            for (int i = 0; i < carRepo.carRepo.Logs.Count; i++)
+            {
+                Console.SetCursorPosition(60, i);
+                Console.WriteLine(carRepo.carRepo.Logs[i]);
+            }
+        }
+        Console.SetCursorPosition(0, 0);
+
         switch (MenuList())
         {
             case ConsoleKey.D1 or ConsoleKey.NumPad1:
@@ -25,6 +32,16 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                 do
                 {
                     Console.Clear();
+                    if (carRepo.carRepo.Logs.Count > 0)
+                    {
+                        for (int i = 0; i < carRepo.carRepo.Logs.Count; i++)
+                        {
+                            Console.SetCursorPosition(60, i);
+                            Console.WriteLine(carRepo.carRepo.Logs[i]);
+                        }
+                    }
+                    Console.SetCursorPosition(0, 0);
+
                     switch (CarSubMenuList())
                     {
                         case ConsoleKey.D1 or ConsoleKey.NumPad1:
@@ -73,6 +90,7 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                             #endregion
                             break;
                         case ConsoleKey.D3 or ConsoleKey.NumPad3:
+                            #region Get all cars
                             Console.Clear();
                             carRepo.carRepo.GetAllCars()
                                 .ForEach(item => Console.WriteLine(
@@ -82,11 +100,14 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                                     $"{item.CarColor}\n" +
                                     $"{item.Seats}"));
                             Console.ReadKey(true);
+                            #endregion
                             break;
                         case ConsoleKey.D4 or ConsoleKey.NumPad4:
                             #region Wash car
                             Console.Clear();
-                            carWash.AddCars(carRepo.carRepo.GetCar(carRepo.carRepo.CarExist()));
+                            Console.WriteLine("Numberplate: ");
+                            numberplate = Validate.ValidString();
+                            carRepo.carRepo.WashCar(numberplate);
                             Console.ReadKey(true);
                             #endregion
                             break;
@@ -113,6 +134,15 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                 do
                 {
                     Console.Clear();
+                    if (carRepo.carRepo.Logs.Count > 0)
+                    {
+                        for (int i = 0; i < carRepo.carRepo.Logs.Count; i++)
+                        {
+                            Console.SetCursorPosition(60, i);
+                            Console.WriteLine(carRepo.carRepo.Logs[i]);
+                        }
+                    }
+                    Console.SetCursorPosition(0,0);
                     switch (CustomerSubMenuList())
                     {
                         case ConsoleKey.D1 or ConsoleKey.NumPad1:
@@ -222,6 +252,7 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                             #endregion
                             break;
                         case ConsoleKey.D6 or ConsoleKey.NumPad6:
+                            #region Get all cars
                             Console.Clear();
                             carRepo.carRepo.GetAllCars()
                                 .ForEach(item => Console.WriteLine(
@@ -231,18 +262,21 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                                     $"{item.CarColor}\n" +
                                     $"{item.Seats}"));
                             Console.ReadKey(true);
+                            #endregion
                             break;
                         case ConsoleKey.D7 or ConsoleKey.NumPad7:
+                            #region Get reservations for customer
                             Console.Clear();
                             Console.WriteLine("Customer id");
                             carRepo.carRepo.GetCustomerReservations(Validate.TryParseInt()).
                                 ForEach(res => Console.WriteLine(res));
                             Console.ReadKey(true);
+                            #endregion
                             break;
                     }
                 } while (!exit);
                 break;
-            case ConsoleKey.D3 or ConsoleKey.NumPad3:
+            case ConsoleKey.Escape:
                 Environment.Exit(0);
                 break;
         }
