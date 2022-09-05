@@ -6,7 +6,7 @@ namespace Rent_A_Car.Repository
     {
         Customer GetCustomer(int id);
         int CustomerExist();
-        Customer NewCustomer(string name, string phone);
+        Customer NewCustomer(string name, string phone, int age);
         bool DeleteCustomer(int id);
         Customer? EditCustomer(int id, string name, string phone);
         // List<Reservation> GetReservations();

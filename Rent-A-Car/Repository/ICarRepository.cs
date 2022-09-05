@@ -9,10 +9,10 @@ namespace Rent_A_Car.Repository
 
         Car GetCar(string numberplate);
         string CarExist();
-        Car NewCar(int seats, string color, string brand, string model);
+        Car NewCar(int seats, string color, string brand, string model, int horsePower);
         bool DeleteCar(string numberplate);
         Car EditCar(string numberplate, int seats, string color, string brand, string model);
-        string RentCar(string numberplate, int customerId, DateTime rentFrom, DateTime rentTo);
+        string RentCar(string numberplate, Customer customer, DateTime rentFrom, DateTime rentTo);
         List<Reservation> GetReservations(Car car);
         List<Car> GetCustomerReservations(int customerID);
         List<Car> GetAllCars();
@@ -20,5 +20,6 @@ namespace Rent_A_Car.Repository
         void AddDistance(Car car, int distance);
         Task WashCar(string numberplate);
         void Receipt(Car car, DateTime rentFrom, DateTime rentTo);
+        bool CollectCar(string numberplate, int customerId);
     }
 }

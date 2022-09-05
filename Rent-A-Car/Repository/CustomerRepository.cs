@@ -29,9 +29,9 @@ namespace Rent_A_Car.Repository
                 }
             }
         }
-        public Customer NewCustomer(string name, string phone)
+        public Customer NewCustomer(string name, string phone, int age)
         {
-            Customer customer = new(_customerCounter++, name, phone);
+            Customer customer = new(_customerCounter++, name, phone, age);
             _customer.Add(customer);
             return customer;
         }

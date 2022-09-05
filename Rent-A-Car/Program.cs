@@ -47,22 +47,25 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                         case ConsoleKey.D1 or ConsoleKey.NumPad1:
                             #region Create car
                             Console.Clear();
-                            Console.WriteLine("Number of seats: ");
-                            int seats = Validate.TryParseInt();
-                            Console.WriteLine("Car color: ");
-                            string carColor = Validate.ValidString();
-                            Console.WriteLine("Car brand: ");
-                            string carBrand = Validate.ValidString();
                             Console.WriteLine("Car model: ");
                             string carModel = Validate.ValidString();
-                            Car returnedCar = carRepo.carRepo.NewCar(seats, carColor, carBrand, carModel);
+                            Console.WriteLine("Car brand: ");
+                            string carBrand = Validate.ValidString();
+                            Console.WriteLine("Car color: ");
+                            string carColor = Validate.ValidString();
+                            Console.WriteLine("Horsepower: ");
+                            int horsepower = Validate.TryParseInt();
+                            Console.WriteLine("Number of seats: ");
+                            int seats = Validate.TryParseInt();
+                            Car returnedCar = carRepo.carRepo.NewCar(seats, carColor, carBrand, carModel, horsepower);
                             Console.Clear();
                             Console.WriteLine($"Car created with: " +
                                 $"\nNumberplate: {returnedCar.Numberplate}" +
                                 $"\nBrand: {returnedCar.CarBrandName}" +
                                 $"\nModel: {returnedCar.CarModel}" +
                                 $"\nColor: {returnedCar.CarColor}" +
-                                $"\nSeats: {returnedCar.Seats}");
+                                $"\nSeats: {returnedCar.Seats}" +
+                                $"\nHorsepower: {returnedCar.Horsepower}");
                             Console.ReadKey(true);
                             #endregion
                             break;
@@ -94,11 +97,11 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                             Console.Clear();
                             carRepo.carRepo.GetAllCars()
                                 .ForEach(item => Console.WriteLine(
-                                    $"{item.CarBrandName}\n" +
-                                    $"{item.CarModel}\n" +
-                                    $"{item.Numberplate}\n" +
-                                    $"{item.CarColor}\n" +
-                                    $"{item.Seats}"));
+                                    $"Car: {item.CarBrandName} {item.CarModel} " +
+                                    $"\nNumberplate: {item.Numberplate} " +
+                                    $"\nColor: {item.CarColor} " +
+                                    $"\nSeats: {item.Seats} " +
+                                    $"\nHorsepower: {item.Horsepower}"));
                             Console.ReadKey(true);
                             #endregion
                             break;
@@ -142,7 +145,7 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                             Console.WriteLine(carRepo.carRepo.Logs[i]);
                         }
                     }
-                    Console.SetCursorPosition(0,0);
+                    Console.SetCursorPosition(0, 0);
                     switch (CustomerSubMenuList())
                     {
                         case ConsoleKey.D1 or ConsoleKey.NumPad1:
@@ -152,12 +155,22 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                             string customerName = Validate.ValidString();
                             Console.WriteLine("Phone: ");
                             string customerPhone = Validate.ValidString();
-                            Customer returnedCustomer = customerRepo.customerRepo.NewCustomer(customerName, customerPhone);
-                            Console.WriteLine($"Customer created with: " +
-                                $"\nId: {returnedCustomer.CustomerId}" +
-                                $"\nName: {returnedCustomer.CustomerName}" +
-                                $"\nPhone: {returnedCustomer.CustomerPhone}");
-                            Console.ReadKey(true);
+                            Console.WriteLine("Age: ");
+                            int customerAge = Validate.TryParseInt();
+                            if (customerAge >= 18)
+                            {
+                                Customer newCustomer = customerRepo.customerRepo.NewCustomer(customerName, customerPhone, customerAge);
+                                Console.WriteLine($"Customer created with: " +
+                                    $"\nId: {newCustomer.CustomerId}" +
+                                    $"\nName: {newCustomer.CustomerName}" +
+                                    $"\nPhone: {newCustomer.CustomerPhone}");
+                                Console.ReadKey(true);
+                            }
+                            else
+                            {
+                                Console.WriteLine("You must be 18 or older");
+                                Console.ReadKey(true);
+                            }
                             #endregion
                             break;
                         case ConsoleKey.D2 or ConsoleKey.NumPad2:
@@ -168,7 +181,7 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                             customerName = Validate.ValidString();
                             Console.WriteLine("Phone: ");
                             customerPhone = Validate.ValidString();
-                            returnedCustomer = customerRepo.customerRepo.EditCustomer(customerId, customerName, customerPhone);
+                            Customer returnedCustomer = customerRepo.customerRepo.EditCustomer(customerId, customerName, customerPhone);
                             Console.WriteLine(returnedCustomer != null ?
                                 $"Customer updated with: " +
                                 $"\nId: {returnedCustomer.CustomerId}" +
@@ -191,8 +204,15 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                         case ConsoleKey.D4 or ConsoleKey.NumPad4:
                             #region Rent car
                             Console.Clear();
+                            carRepo.carRepo.GetAllCars().ForEach(car => 
+                            Console.WriteLine($"Car: {car.CarBrandName} {car.CarModel} " +
+                                                $"\nNumberplate: {car.Numberplate} " +
+                                                $"\nColor: {car.CarColor} " +
+                                                $"\nSeats: {car.Seats} " +
+                                                $"\nHorsepower: {car.Horsepower}"));
+                            
                             string numberplate = carRepo.carRepo.CarExist();
-                            customerId = customerRepo.customerRepo.CustomerExist();
+                            Customer customer = customerRepo.customerRepo.GetCustomer(customerRepo.customerRepo.CustomerExist());
                             Console.WriteLine("Rent from: (dd-mm-yyyy)");
                             DateTime rentFrom = Validate.TryParseDateTime();
                             while (rentFrom < DateTime.Now)
@@ -209,7 +229,7 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                                 Console.WriteLine("Cannot rent backwards \nTry again: ");
                                 rentTo = Validate.TryParseDateTime();
                             }
-                            string feedback = carRepo.carRepo.RentCar(numberplate, customerId, rentFrom, rentTo);
+                            string feedback = carRepo.carRepo.RentCar(numberplate, customer, rentFrom, rentTo);
                             while (feedback == String.Empty)
                             {
                                 Console.WriteLine("Rent from: (dd-mm-yyyy)");
@@ -228,13 +248,23 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                                     Console.WriteLine("Cannot rent backwards \nTry again: ");
                                     rentTo = Validate.TryParseDateTime();
                                 }
-                                feedback = carRepo.carRepo.RentCar(numberplate, customerId, rentFrom, rentTo);
+                                feedback = carRepo.carRepo.RentCar(numberplate, customer, rentFrom, rentTo);
                             }
                             Console.WriteLine(feedback);
                             Console.ReadKey(true);
                             #endregion
                             break;
-                        case ConsoleKey.D5 or ConsoleKey.D5:
+                        case ConsoleKey.D5 or ConsoleKey.NumPad5:
+                            #region Collect car
+                            Console.WriteLine("Numberplate: ");
+                            numberplate = Validate.ValidString();
+                            Console.WriteLine("Customer id: ");
+                            customerId = Validate.TryParseInt();
+                            bool collected = carRepo.carRepo.CollectCar(numberplate, customerId);
+                            Console.WriteLine(collected ? "Car was collected" : "Car needs to be rented");
+                            #endregion
+                            break;
+                        case ConsoleKey.D6 or ConsoleKey.D6:
                             #region Return car
                             Console.Clear();
                             Console.WriteLine("Numberplate: ");
@@ -251,20 +281,20 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
 
                             #endregion
                             break;
-                        case ConsoleKey.D6 or ConsoleKey.NumPad6:
+                        case ConsoleKey.D7 or ConsoleKey.NumPad7:
                             #region Get all cars
                             Console.Clear();
                             carRepo.carRepo.GetAllCars()
                                 .ForEach(item => Console.WriteLine(
-                                    $"{item.CarBrandName}\n" +
-                                    $"{item.CarModel}\n" +
-                                    $"{item.Numberplate}\n" +
-                                    $"{item.CarColor}\n" +
-                                    $"{item.Seats}"));
+                                    $"Car: {item.CarBrandName} {item.CarModel} " +
+                                    $"\nNumberplate: {item.Numberplate} " +
+                                    $"\nColor: {item.CarColor} " +
+                                    $"\nSeats: {item.Seats} " +
+                                    $"\nHorsepower: {item.Horsepower}"));
                             Console.ReadKey(true);
                             #endregion
                             break;
-                        case ConsoleKey.D7 or ConsoleKey.NumPad7:
+                        case ConsoleKey.D8 or ConsoleKey.NumPad8:
                             #region Get reservations for customer
                             Console.Clear();
                             Console.WriteLine("Customer id");
@@ -319,9 +349,10 @@ ConsoleKey CustomerSubMenuList()
         "2. Edit customer",
         "3. Delete customer",
         "4. Rent car",
-        "5. Return car",
-        "6. Show all cars",
-        "7. Show rented cars",
+        "5. Collect car",
+        "6. Return car",
+        "7. Show all cars",
+        "8. Show rented cars",
         "Esc. Exit"
     };
     list.ForEach(item => Console.WriteLine(item));

@@ -9,5 +9,6 @@
         string CarColor { get; set; }
         int Distance { get; set; }
         List<Reservation> Reservations { get; set; }
+        int Horsepower { get; set; }
     }
 }

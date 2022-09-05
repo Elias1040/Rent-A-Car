@@ -1,4 +1,5 @@
 ﻿using Rent_A_Car.Models;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Rent_A_Car.Repository
 {
@@ -36,7 +37,7 @@ namespace Rent_A_Car.Repository
             }
         }
 
-        public string RentCar(string numberplate, int customerId, DateTime rentFrom, DateTime rentTo)
+        public string RentCar(string numberplate, Customer customer, DateTime rentFrom, DateTime rentTo)
         {
             Car? car = GetCar(numberplate);
             foreach (Reservation item in car.Reservations)
@@ -46,7 +47,11 @@ namespace Rent_A_Car.Repository
                     return string.Empty;
                 }
             }
-            Reservation reservation = new(customerId, rentFrom, rentTo);
+            if (customer.Age <= 21 && car.Horsepower >= 100)
+            {
+                return "You must be 22 or older to rent cars above 100HP";
+            }
+            Reservation reservation = new(customer.CustomerId, rentFrom, rentTo);
             car.Reservations.Add(reservation);
             Receipt(car, rentFrom, rentTo);
             return $"Car rented: " +
@@ -58,7 +63,7 @@ namespace Rent_A_Car.Repository
         public void Receipt(Car car, DateTime rentFrom, DateTime rentTo)
         {
             FileStream file = File.Create($@"C:\Users\elias\Downloads\RentACarReceipts\{car.Numberplate}.txt");
-            using (StreamWriter sw = new StreamWriter(file))
+            using (StreamWriter sw = new(file))
             {
                 sw.WriteLine($"Brand: {car.CarBrandName}");
                 sw.WriteLine($"Model: {car.CarModel}");
@@ -95,15 +100,16 @@ namespace Rent_A_Car.Repository
             return plate.ToUpper();
         }
 
-        public Car NewCar(int seats, string color, string brand, string model)
+        public Car NewCar(int seats, string color, string brand, string model, int horsePower)
         {
             string numberplate = NumberplateGenerator();
-            Car car = new(numberplate, seats, color, brand, model);
+            Car car = new(numberplate, seats, color, brand, model, horsePower);
             _cars.Add(car);
             return car;
         }
 
-        public bool DeleteCar(string numberplate) => _cars.Remove(_cars.Find(car => car.Numberplate == numberplate));
+        public bool DeleteCar(string numberplate) =>
+            _cars.Remove(_cars.Find(car => car.Numberplate == numberplate));
 
         public Car EditCar(string numberplate, int seats, string color, string brand, string model)
         {
@@ -157,5 +163,22 @@ namespace Rent_A_Car.Repository
         {
             Logs.Add(await CarWash.StartWash(GetCar(numberplate)));
         }
+
+        public bool CollectCar(string numberplate, int customerId)
+        {
+            Car? car = GetCar(numberplate);
+            Reservation? reservation = car.Reservations.Find(res => res.CustomerId == customerId);
+            if (DateTime.Now >= reservation?.ReservedFrom && DateTime.Now <= reservation.ReservedTo)
+            {
+                Task.Run(async () => await WashCar(numberplate));
+                return car.Reservations.Remove(GetCar(numberplate).Reservations
+                    .Find(res => res.CustomerId == customerId));
+            }
+            else
+            {
+                return false;
+            }
+        }
+
     }
 }
