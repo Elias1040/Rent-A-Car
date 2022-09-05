@@ -19,6 +19,7 @@ Rent-A-Car is a program which features  car renting and car wash
   <li>Age restriction</li> [✔️]
   <li>Car wash</li> [✔️]
   <li>Higher price for extra dirt when washing</li>
+  
   <li>Receipt after rent</li> [✔️]
   <li>Wash before and after renting car</li> [✔️]
 </ul>
