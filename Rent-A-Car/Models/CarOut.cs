@@ -1,6 +1,7 @@
-﻿namespace Rent_A_Car.Models
+﻿
+namespace Rent_A_Car.Models
 {
-    public class Car : ICar
+    public class CarOut
     {
         public string Numberplate { get; set; }
         public int Seats { get; set; }
@@ -13,19 +14,19 @@
         public double Price { get; set; }
         public int Dirt { get; set; }
         public bool Removed { get; set; }
-        public Car(string numberplate, int seats, string carColor, string carBrandName, string carModel, int horsePower, double price)
+        public CarOut(Car car)
         {
-            Numberplate = numberplate;
-            Seats = seats;
-            CarColor = carColor;
-            CarBrandName = carBrandName;
-            CarModel = carModel;
-            Reservations = new List<Reservation>();
+            Numberplate = car.Numberplate;
+            Seats = car.Seats;
+            CarColor = car.CarColor;
+            CarBrandName = car.CarBrandName;
+            CarModel = car.CarModel;
+            Reservations = car.Reservations;
             Distance = 0;
-            Horsepower = horsePower;
-            Price = price;
-            Dirt = 0;
-            Removed = false;
+            Horsepower = car.Horsepower;
+            Price = car.Price;
+            Dirt = car.Dirt;
+            Removed = car.Removed;
         }
     }
 }

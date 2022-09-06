@@ -1,5 +1,4 @@
-﻿using Rent_A_Car.Models;
-
+﻿
 namespace Rent_A_Car.Repository
 {
     public interface ICarRepository
@@ -9,17 +8,18 @@ namespace Rent_A_Car.Repository
 
         Car GetCar(string numberplate);
         string CarExist();
-        Car NewCar(int seats, string color, string brand, string model, int horsePower);
+        CarOut NewCar(int seats, string color, string brand, string model, int horsePower, double price);
         bool DeleteCar(string numberplate);
-        Car EditCar(string numberplate, int seats, string color, string brand, string model);
+        CarOut EditCar(string numberplate, int seats, string color, string brand, string model, int horsepower, double price);
         string RentCar(string numberplate, Customer customer, DateTime rentFrom, DateTime rentTo);
-        List<Reservation> GetReservations(Car car);
-        List<Car> GetCustomerReservations(int customerID);
-        List<Car> GetAllCars();
-        Car ReturnCar(string numberplate, int customerId, int distance);
+        List<ReservationOut> GetReservations(Car car);
+        List<ReservationOut> GetCustomerReservations(int customerID);
+        List<CarOut> GetAllCars();
+        CarOut ReturnCar(string numberplate, int customerId, int distance, int dirt);
         void AddDistance(Car car, int distance);
         Task WashCar(string numberplate);
-        void Receipt(Car car, DateTime rentFrom, DateTime rentTo);
+        void Receipt(Car car, DateTime rentFrom, DateTime rentTo, double chargeCarwash = 0, double chargeExceed = 0);
         bool CollectCar(string numberplate, int customerId);
+        public double Sales();
     }
 }
