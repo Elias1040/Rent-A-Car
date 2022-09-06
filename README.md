@@ -44,7 +44,7 @@ Rent-A-Car is a program for a final assignment which features car renting and ca
 * [V1.3](https://github.com/Elias1040/Rent-A-Car/blob/V1.3)
 * [V1.4](https://github.com/Elias1040/Rent-A-Car/blob/V1.4)
 * [V1.5](https://github.com/Elias1040/Rent-A-Car/tree/V1.5)
-* 
+
 ## Changelog
 <!--- [Github](https://github.com/failbreak/TheBank/commits/Development) - Her er mine commits de beskriver meget af hvad der er sket i det løb af development --->
 
