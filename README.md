@@ -10,7 +10,7 @@
 
 
 ## Intro
-Rent-A-Car is a program which features  car renting and car wash
+Rent-A-Car is a program for a final assignment which features car renting and car wash
 
 ## Requirements
 <ul>
