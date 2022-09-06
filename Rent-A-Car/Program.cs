@@ -130,7 +130,7 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                             #region Wash car
                             Console.Clear();
                             Console.WriteLine("Numberplate: ");
-                            numberplate = Validate.ValidString();
+                            numberplate = carRepo.carRepo.CarExist();
                             carRepo.carRepo.WashCar(numberplate);
                             Console.ReadKey(true);
                             #endregion
@@ -146,7 +146,7 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                                     $"\nSeats: {item.Seats} " +
                                     $"\nHorsepower: {item.Horsepower}\n"));
                             Console.WriteLine("Car numberplate: ");
-                            numberplate = Validate.ValidString();
+                            numberplate = carRepo.carRepo.CarExist();
                             bool isDeleted = carRepo.carRepo.DeleteCar(numberplate);
                             Console.Clear();
                             Console.WriteLine(isDeleted ? "Car was deleted" : "Car doesnt exist");
@@ -239,7 +239,7 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                             #region Delete customer
                             Console.Clear();
                             Console.WriteLine("Customer id");
-                            customerId = Validate.TryParseInt();
+                            customerId = customerRepo.customerRepo.CustomerExist();
                             bool isDeleted = customerRepo.customerRepo.DeleteCustomer(customerId);
                             Console.Clear();
                             Console.WriteLine(isDeleted ? "Customer was deleted" : "Customer doesnt exist");
@@ -304,13 +304,13 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                             #region Return car
                             Console.Clear();
                             Console.WriteLine("Customer id: ");
-                            customerId = Validate.TryParseInt();
+                            customerId = customerRepo.customerRepo.CustomerExist();
                             carRepo.carRepo.GetCustomerReservations(customerId).
                                 ForEach(res =>
                                 Console.WriteLine($"Numberplate: {res.Numberplate}" +
                                 $"\nDate: {res.ReservedFrom:dd-MM-yyyy} - {res.ReservedTo:dd-MM-yyyy}\n"));
                             Console.WriteLine("Numberplate: ");
-                            numberplate = Validate.ValidString();
+                            numberplate = carRepo.carRepo.CarExist();
                             Console.WriteLine("Distance driven: ");
                             int distance = Validate.TryParseInt();
                             Console.WriteLine("How dirty: (0/100)");
@@ -351,9 +351,10 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                             List<ReservationOut> reservations = carRepo.carRepo.GetCustomerReservations(Validate.TryParseInt());
                             Console.Clear();
                             reservations.ForEach(res => 
-                            Console.WriteLine($"Numberplate: {res.Numberplate}" +
+                            Console.WriteLine(reservations.Count > 0 ? ($"Numberplate: {res.Numberplate}" +
                                 $"Date: {res.ReservedFrom:dd-MM-yyyy}" +
-                                $" - {res.ReservedTo:dd-MM-yyyy}\n"));
+                                $" - {res.ReservedTo:dd-MM-yyyy}\n") : 
+                                "Customer has no reservations"));
                             Console.ReadKey(true);
                             #endregion
                             break;

@@ -294,7 +294,7 @@ namespace Rent_A_Car.Repository
         }
 
         /// <summary>
-        /// starts a Carwash task and adds logs to logg list
+        /// starts a Carwash task and adds logs to log list
         /// </summary>
         /// <param name="numberplate"></param>
         /// <returns>logs</returns>
