@@ -129,7 +129,6 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                         case ConsoleKey.D4 or ConsoleKey.NumPad4:
                             #region Wash car
                             Console.Clear();
-                            Console.WriteLine("Numberplate: ");
                             numberplate = carRepo.carRepo.CarExist();
                             carRepo.carRepo.WashCar(numberplate);
                             Console.ReadKey(true);
@@ -303,13 +302,11 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                         case ConsoleKey.D6 or ConsoleKey.NumPad6:
                             #region Return car
                             Console.Clear();
-                            Console.WriteLine("Customer id: ");
                             customerId = customerRepo.customerRepo.CustomerExist();
                             carRepo.carRepo.GetCustomerReservations(customerId).
                                 ForEach(res =>
                                 Console.WriteLine($"Numberplate: {res.Numberplate}" +
                                 $"\nDate: {res.ReservedFrom:dd-MM-yyyy} - {res.ReservedTo:dd-MM-yyyy}\n"));
-                            Console.WriteLine("Numberplate: ");
                             numberplate = carRepo.carRepo.CarExist();
                             Console.WriteLine("Distance driven: ");
                             int distance = Validate.TryParseInt();
@@ -340,7 +337,7 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                                     $"\nColor: {item.CarColor} " +
                                     $"\nSeats: {item.Seats} " +
                                     $"\nHorsepower: {item.Horsepower}" +
-                                    $"\nPrice: {item.Price:c}"));
+                                    $"\nPrice: {item.Price:c}\n"));
                             Console.ReadKey(true);
                             #endregion
                             break;
@@ -352,7 +349,7 @@ void Menu(CarMiddleman carRepo, CustomerMiddleman customerRepo)
                             Console.Clear();
                             reservations.ForEach(res => 
                             Console.WriteLine(reservations.Count > 0 ? ($"Numberplate: {res.Numberplate}" +
-                                $"Date: {res.ReservedFrom:dd-MM-yyyy}" +
+                                $"Date: {res.ReservedFrom:dd-MM-yyyy}\n" +
                                 $" - {res.ReservedTo:dd-MM-yyyy}\n") : 
                                 "Customer has no reservations"));
                             Console.ReadKey(true);
